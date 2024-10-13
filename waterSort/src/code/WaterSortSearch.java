@@ -84,6 +84,28 @@ public class WaterSortSearch extends GenericSearch {
 		case "BF":
 			solution = wss.breadthFirstSearch(rootNode);
 			break;
+		case "DF":
+			solution = wss.depthFirstSearch(rootNode);
+			break;
+		case "UC":
+			solution = wss.uniformCostSearch(rootNode);
+			break;
+		case "ID":
+			solution = wss.iterativeDeepeningSearch(rootNode);
+			break;
+		case "GR1":
+			solution = wss.greedy(rootNode,1);
+			break;
+		case "GR2":
+			solution = wss.greedy(rootNode,2);
+			break;
+		case "AS1":
+			solution = wss.aStar(rootNode,1);
+			break;
+		case "AS2":
+			solution = wss.aStar(rootNode,2);
+			break;
+		
 		default:
 			solution = "NOSOLUTION";
 		}
@@ -93,7 +115,7 @@ public class WaterSortSearch extends GenericSearch {
 
 	//////////// Pouring Methods////////////
 	@Override
-	public String[][] getResult(Node node, String action) {
+	public PourResult getResult(Node node, String action) {
 		int[] coordinates = extractAction(action);
 		int i = coordinates[0];
 		int j = coordinates[1];
@@ -111,47 +133,44 @@ public class WaterSortSearch extends GenericSearch {
 		return new int[] { i, j };
 	}
 
-	public static String[][] pour(Node node, int i, int j) {
+	public static PourResult pour(Node node, int i, int j) {
+	    String[][] state = node.getState();
+	    String[][] newState = copyState(state, new String[numberOfBottles][bottleCapacity]);
 
-		String[][] state = node.getState();
-		String[][] newState = copyState(state, new String[numberOfBottles][bottleCapacity]);
+	    String[] bottleToPourFrom = newState[i];
+	    String[] bottleToPourTo = newState[j];
+	    int pours = 0;
 
-		String[] bottleToPourFrom = newState[i];
-		String[] bottleToPourTo = newState[j];
+	    int consecutive = checkConsecutive(bottleToPourFrom);
+	    System.out.println("gowa el pour");
+	    System.out.println("Consecutive " + consecutive);
+	    
+	    int emptyToPourTo = emptySlots(bottleToPourTo);
+	    System.out.println("empty to pour to:  " + emptyToPourTo);
+	    
+	    int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
+	    System.out.println("pour from index: " + topPourFromIndex);
+	    
+	    int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
+	    System.out.println("pour to index: " + topPourToIndex);
 
-		int consecutive = checkConsecutive(bottleToPourFrom);
-		System.out.println("gowa el pour");
+	    while (emptyToPourTo >= consecutive && consecutive > 0) {
+	        pourOnce(topPourFromIndex, topPourToIndex, bottleToPourFrom, bottleToPourTo);
+	        topPourFromIndex++;
+	        topPourToIndex--;
+	        emptyToPourTo--;
+	        consecutive--;
+	        pours++;
+	        System.out.println("Pours "+pours);
+	    }
+	    
+	    return new PourResult(newState, pours);
+	}
 
-		System.out.println("Consecutive " + consecutive);
-		int emptyToPourTo = emptySlots(bottleToPourTo);
-		System.out.println("empty to pour to:  " + emptyToPourTo);
+	public static void pourOnce(int fromIndex, int toIndex, String[] bottleToPourFrom, String[] bottleToPourTo) {
 
-		int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
-
-		System.out.println("pour from index: " + topPourFromIndex);
-
-		int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
-		System.out.println("pour to index: " + topPourToIndex);
-		int actualPour = 0;
-
-//		int newCost = node.getPathCost() + 1;
-//		node.setPathCost(newCost);
-		while (emptyToPourTo >= consecutive && consecutive > 0) {
-
-			bottleToPourTo[topPourToIndex] = bottleToPourFrom[topPourFromIndex];
-			bottleToPourFrom[topPourFromIndex] = "e";
-			topPourFromIndex++;
-			topPourToIndex--;
-
-			emptyToPourTo--;
-			consecutive--;
-
-			actualPour++;
-
-		}
-		node.setPathCost(node.getPathCost() + actualPour);
-
-		return newState;
+		bottleToPourTo[toIndex] = bottleToPourFrom[fromIndex];
+		bottleToPourFrom[fromIndex] = "e";
 
 	}
 

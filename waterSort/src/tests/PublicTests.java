@@ -445,30 +445,30 @@ class Checker{
         }
         return true;
     }
-//
-//    public boolean applyPlan(String grid, String solution){
-//        boolean x = true;
-//        solution = solution.toLowerCase();
-//        if (solution.equals("nosolution;")) {
-//            return false;
-//        }
-//        String[] y  = solution.split(";");
-//        String z = y[0];
-//        int _a = Integer.parseInt(y[1]);
-//        z.replace(" ", "");
-//        z.replace("\n", "");
-//        z.replace("\r", "");
-//        z.replace("\n\r", "");
-//        z.replace("\t", "");
-//
-//        String[] _b = z.split(",");
-//
-//        x = i(_b);
-//        if(!x) {
-//            return false;
-//        }
-//        return t() && this.b == _a;
-//    }
+
+    public boolean applyPlan(String grid, String solution){
+        boolean x = true;
+        solution = solution.toLowerCase();
+        if (solution.equals("nosolution;")) {
+            return false;
+        }
+        String[] y  = solution.split(";");
+        String z = y[0];
+        int _a = Integer.parseInt(y[1]);
+        z.replace(" ", "");
+        z.replace("\n", "");
+        z.replace("\r", "");
+        z.replace("\n\r", "");
+        z.replace("\t", "");
+
+        String[] _b = z.split(",");
+
+        x = i(_b);
+        if(!x) {
+            return false;
+        }
+        return t() && this.b == _a;
+    }
     
     
 //    public boolean applyPlan(String grid, String solution) {
@@ -509,50 +509,50 @@ class Checker{
 //        return t() && this.b == _a;
 //    }
     
-    public boolean applyPlan(String grid, String solution) {
-        boolean x = true;
-        solution = solution.toLowerCase();
-        
-        // Check if the solution is "nosolution;"
-        if (solution.equals("nosolution;")) {
-            System.out.println("No solution found.");
-            return false;
-        }
-
-        // Split the solution by ";"
-        String[] y = solution.split(";");
-        
-        // Extract the plan and expected number of steps
-        String z = y[0];  // The plan
-        int _a = Integer.parseInt(y[1]);  // Number of steps
-
-        // Clean the plan by removing any unwanted characters
-        z = z.replace(" ", "").replace("\n", "").replace("\r", "").replace("\n\r", "").replace("\t", "");
-
-        // Split the plan by ","
-        String[] _b = z.split(",");
-
-        // Print the expected plan
-        System.out.println("Expected Plan: " + Arrays.toString(_b));
-
-        // Validate the plan (assuming `i()` checks the plan validity)
-        x = i(_b);
-        if (!x) {
-            return false;
-        }
-
-        // Print the expected number of steps
-        System.out.println("Expected Number of Steps: " + _a);
-
-        // Validate the number of steps (assuming `this.b` is the correct number of steps)
-        if (this.b != _a) {
-            System.out.println("Number of steps does not match: expected " + _a + ", but got " + this.b);
-            return false;
-        }
-
-        // Final validation (assuming `t()` is a final check)
-        return t() && this.b == _a;
-    }
+//    public boolean applyPlan(String grid, String solution) {
+//        boolean x = true;
+//        solution = solution.toLowerCase();
+//        
+//        // Check if the solution is "nosolution;"
+//        if (solution.equals("nosolution;")) {
+//            System.out.println("No solution found.");
+//            return false;
+//        }
+//
+//        // Split the solution by ";"
+//        String[] y = solution.split(";");
+//        
+//        // Extract the plan and expected number of steps
+//        String z = y[0];  // The plan
+//        int _a = Integer.parseInt(y[1]);  // Number of steps
+//
+//        // Clean the plan by removing any unwanted characters
+//        z = z.replace(" ", "").replace("\n", "").replace("\r", "").replace("\n\r", "").replace("\t", "");
+//
+//        // Split the plan by ","
+//        String[] _b = z.split(",");
+//
+//        // Print the expected plan
+//        System.out.println("Expected Plan: " + Arrays.toString(_b));
+//
+//        // Validate the plan (assuming `i()` checks the plan validity)
+//        x = i(_b);
+//        if (!x) {
+//            return false;
+//        }
+//
+//        // Print the expected number of steps
+//        System.out.println("Expected Number of Steps: " + _a);
+//
+//        // Validate the number of steps (assuming `this.b` is the correct number of steps)
+//        if (this.b != _a) {
+//            System.out.println("Number of steps does not match: expected " + _a + ", but got " + this.b);
+//            return false;
+//        }
+//
+//        // Final validation (assuming `t()` is a final check)
+//        return t() && this.b == _a;
+//    }
 
 }
 
