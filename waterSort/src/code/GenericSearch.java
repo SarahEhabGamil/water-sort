@@ -15,11 +15,11 @@ public abstract class GenericSearch {
 
 	public String breadthFirstSearch(Node initialNode) {
 		Queue<Node> queue = new LinkedList<>();
-		Set<Node> visited = new HashSet<>();
-		
+		Set<String> visited = new HashSet<>();
 		queue.add(initialNode);
 
 		while (!queue.isEmpty()) {
+			System.out.println("--------------------------------------------------------------");
 			Node node = queue.poll();
 
 			String[][] currentState = node.getState();
@@ -29,30 +29,34 @@ public abstract class GenericSearch {
 				System.out.println("Goal state");
 				String plan = plan(node);
 				String goalPath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
-				System.out.println("Goal Path: "+ goalPath);
+				System.out.println("Goal Path:" + goalPath);
 				System.out.println("--------------------------------------------------------------");
+				return goalPath;
 			}
 
-			visited.add(node);
+			visited.add(convertStateToString(currentState));
 
-			System.out.println("Operations for next Child" + getOperations(node));
+			System.out.println("Operations for next Child: " + getOperations(node));
 
 			for (String action : getOperations(node)) {
-
+				System.out.println("Action in hand: " + action);
+				
 				String[][] childState = getResult(node, action);
 
-				Node childNode = new Node(childState, node, action, node.getDepth() + 1, node.getPathCost() + 1);
-				System.out.println("Child Node");
+				
+				Node childNode = new Node(childState, node, action, node.getDepth() + 1, node.getPathCost()+1);
+				System.out.println("Child Node:");
 				printNode(childNode);
-				nodesExpanded++;
+				
 
-				if (!visited.contains(childNode)) {
+				String childStateString = convertStateToString(childState);
+
+				if (!visited.contains(childStateString) && !isReverseAction(node.getAction(), action)) {
 					queue.add(childNode);
-
+					nodesExpanded++;
 				}
-				System.out.println(("--------------------------------------"));
+				System.out.println("--------------------------------------------------------------");
 			}
-
 		}
 
 		return "nosolution";
@@ -87,13 +91,15 @@ public abstract class GenericSearch {
 	}
 
 	public static void printNode(Node node) {
-		printState(node.getState());
 		System.out.println("Parent State:");
-//		printState(node.getParent().getState());
+		if (node.getParent() != null) {
+			printState(node.getParent().getState());
+			System.out.println("----------------");
+		}
+		printState(node.getState());
 		System.out.println("Operator: " + node.getAction());
-		System.out.print("Depth: " + node.getDepth());
-		System.out.println("Path Cost" + node.getPathCost());
-	
+		System.out.println("Depth: " + node.getDepth());
+		System.out.println("Path Cost: " + node.getPathCost());
 
 	}
 
@@ -108,4 +114,33 @@ public abstract class GenericSearch {
 		}
 	}
 
+	public boolean isReverseAction(String previousAction, String currentAction) {
+
+		if (previousAction == null || currentAction == null)
+			return false;
+
+		String[] prevParts = previousAction.split("_");
+		String[] currParts = currentAction.split("_");
+
+		if (prevParts.length < 3 || currParts.length < 3)
+			return false;
+
+		String prevSource = prevParts[1];
+		String prevTarget = prevParts[2];
+		String currSource = currParts[1];
+		String currTarget = currParts[2];
+
+		return prevSource.equals(currTarget) && prevTarget.equals(currSource);
+	}
+
+	public String convertStateToString(String[][] state) {
+		StringBuilder sb = new StringBuilder();
+		for (String[] bottle : state) {
+			for (String color : bottle) {
+				sb.append(color).append(",");
+			}
+			sb.append(";");
+		}
+		return sb.toString();
+	}
 }

@@ -47,23 +47,21 @@ public class WaterSortSearch extends GenericSearch {
 		return true;
 	}
 
+	/////////// Getting Operations/////////
 	@Override
 	public List<String> getOperations(Node node) {
 		List<String> operations = new ArrayList<>();
 		String[][] state = node.getState();
-		
+
 		for (int i = 0; i < state.length; i++) {
 			String bottleTop = getTop(state[i]);
-			
-		
-			
+
 			for (int j = 0; j < state.length; j++) {
 				if (i != j && emptySlots(state[j]) > 0) {
-					
+
 					if (getTop(state[j]).equals(bottleTop) || getTop(state[j]).equals("e")) {
 						String action = formulateAction(i, j);
-				
-						
+
 						operations.add(action);
 					}
 				}
@@ -73,23 +71,18 @@ public class WaterSortSearch extends GenericSearch {
 
 	}
 
-	
-
-	@Override
-	public int getStepCost(String state, String action) {
-		// TODO Auto-generated method stub
-		return 0;
+	public static String formulateAction(int i, int j) {
+		return "pour_" + i + "_" + j;
 	}
 
 	public static String solve(String initialString, String strategy, boolean visualize) {
-		WaterSortSearch sarah = new WaterSortSearch();
+		WaterSortSearch wss = new WaterSortSearch();
 		Node rootNode = prepareInitialState(initialString);
-
 
 		String solution;
 		switch (strategy) {
 		case "BF":
-			solution = sarah.breadthFirstSearch(rootNode);
+			solution = wss.breadthFirstSearch(rootNode);
 			break;
 		default:
 			solution = "NOSOLUTION";
@@ -98,11 +91,7 @@ public class WaterSortSearch extends GenericSearch {
 
 	}
 
-	public static String formulateAction(int i, int j) {
-		return "pour_" + i + "_" + j;
-	}
-
-	////////////Pouring Methods
+	//////////// Pouring Methods////////////
 	@Override
 	public String[][] getResult(Node node, String action) {
 		int[] coordinates = extractAction(action);
@@ -111,7 +100,7 @@ public class WaterSortSearch extends GenericSearch {
 		return pour(node, i, j);
 
 	}
-	
+
 	public static int[] extractAction(String action) {
 
 		String[] parts = action.split("_");
@@ -123,40 +112,48 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static String[][] pour(Node node, int i, int j) {
+		
 		String[][] state = node.getState();
-		String[][] newState = new String[numberOfBottles][bottleCapacity];
+		String[][] newState = copyState(state, new String[numberOfBottles][bottleCapacity]);
+		
+		String[] bottleToPourFrom = newState[i];
+		String[] bottleToPourTo = newState[j];
 
-		String[] bottleToPourFrom = state[i];
-		String topColorToPourFrom = getTop(bottleToPourFrom);
+		int consecutive = checkConsecutive(bottleToPourFrom);
+		System.out.println("gowa el pour");
+		
+		System.out.println("Consecutive " + consecutive);
+		int emptyToPourTo = emptySlots(bottleToPourTo);
+		System.out.println("empty to pour to:  " + emptyToPourTo);
 
-		String[] bottleToPourTo = state[j];
-	
-
-		for (int k = 0; k < emptySlots(bottleToPourTo); k++) {
-			if(getTop(bottleToPourTo).equals(topColorToPourFrom)) {
-				newState = actuallyPour(node, i , j);
+		int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
+		
+		System.out.println("pour from index: " + topPourFromIndex);
+		
+		int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
+		System.out.println("pour to index: " + topPourToIndex);
+		
+		if(consecutive > 1) {
+			node.setPathCost(node.getPathCost() + consecutive -1 );
 			}
+		while (emptyToPourTo >= consecutive && consecutive > 0) {
 			
+
+			bottleToPourTo[topPourToIndex] = bottleToPourFrom[topPourFromIndex];
+			bottleToPourFrom[topPourFromIndex] = "e";
+			topPourFromIndex++;
+			topPourToIndex--;
+
+			emptyToPourTo--;
+			consecutive--;
+
+
+
 		}
+
 		return newState;
 
 	}
-	
-	
-	public static String[][] actuallyPour( Node node, int i , int j) {
-		String [][] state = node.getState();
-		String [] fromBottle =state[i];
-		String [] toBottle = state[j];
-		int from = getTopIndex(fromBottle);
-		int to = getTopIndex(toBottle)+1;
-		toBottle[to]= fromBottle[from];
-		fromBottle[from]= "e";
-		state[i]=fromBottle;
-		state[j] = toBottle;
-		return state;
-		
-	}
-	
 
 	public static int emptySlots(String[] bottle) {
 		int count = 0;
@@ -170,42 +167,93 @@ public class WaterSortSearch extends GenericSearch {
 		return count;
 	}
 
-
-	
-	
-	
-
-	public static void main(String[] args) {
-
-		String init = "3;" + "4;" + "r,y,r,y;" + "y,r,y,r;" + "e,e,e,e;";
-		prepareInitialState(init);
-
-		solve(init, "BF", false);
+	public static int checkConsecutive(String[] bottle) {
+		int count = 0;
+		String bottleTop = getTop(bottle);
+		int bottleTopIndex = getTopIndex(bottle);
+		if(bottleTopIndex == -1) {
+			return count;
+		}
+		
+		for (int i = bottleTopIndex; i < bottle.length; i++) {
+			if (!bottle[i].equals("e") && bottle[i].equals(bottleTop)) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		return count;
 
 	}
-	public static String getTop (String[] bottle) {
-		for(String color : bottle) {
-			if(!color.equals("e")) {
+
+	public static String[][] copyState(String[][] oldState, String[][] newState) {
+		
+
+		for (int i = 0; i < oldState.length; i++) {
+
+			for (int j = 0; j < oldState[i].length; j++) {
+				newState[i][j] = oldState[i][j];
+			}
+		}
+
+		return newState;
+	}
+
+	public static int validPourToIndex(int index) {
+		if (index == -1) {
+			int validIndex = bottleCapacity - 1;
+			return validIndex;
+		} else {
+			if (index != 0) {
+				return --index;
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	public static int validPourFromIndex(int index) {
+		if (index == -1) {
+			int validIndex = bottleCapacity - 1;
+			return validIndex;
+		} else {
+			return index;
+		}
+	}
+
+	@Override
+	public int getStepCost(String state, String action) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public static String getTop(String[] bottle) {
+		for (String color : bottle) {
+			if (!color.equals("e")) {
 				return color;
 			}
 		}
 		return "e";
-		
+
 	}
-	
-	public static int getTopIndex(String [] bottle) {
-		for(int i = 0 ; i< bottle.length ; i++) {
+
+	public static int getTopIndex(String[] bottle) {
+		for (int i = 0; i < bottle.length; i++) {
 			String color = bottle[i];
-			if(!color.equals("e")) {
+			if (!color.equals("e")) {
 				return i;
 			}
 		}
 		return -1;
 	}
 
+	public static void main(String[] args) {
+		String init = "5;" + "4;" + "b,y,r,b;" + "b,y,r,r;" + "y,r,b,y;" + "e,e,e,e;" + "e,e,e,e;";
+		;
+		prepareInitialState(init);
 
-	
+		solve(init, "BF", false);
 
-
+	}
 
 }

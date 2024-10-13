@@ -36,5 +36,8 @@ public class Node {
 	public int getDepth() {
 		return depth;
 	}
-
+ 
+	public void setPathCost(int pathCost) {
+		this.pathCost = pathCost;
+	}
 }
