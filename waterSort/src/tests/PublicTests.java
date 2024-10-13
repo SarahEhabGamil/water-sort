@@ -445,7 +445,7 @@ class Checker{
         }
         return true;
     }
-
+//
 //    public boolean applyPlan(String grid, String solution){
 //        boolean x = true;
 //        solution = solution.toLowerCase();

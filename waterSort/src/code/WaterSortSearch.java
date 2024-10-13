@@ -112,32 +112,31 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static String[][] pour(Node node, int i, int j) {
-		
+
 		String[][] state = node.getState();
 		String[][] newState = copyState(state, new String[numberOfBottles][bottleCapacity]);
-		
+
 		String[] bottleToPourFrom = newState[i];
 		String[] bottleToPourTo = newState[j];
 
 		int consecutive = checkConsecutive(bottleToPourFrom);
 		System.out.println("gowa el pour");
-		
+
 		System.out.println("Consecutive " + consecutive);
 		int emptyToPourTo = emptySlots(bottleToPourTo);
 		System.out.println("empty to pour to:  " + emptyToPourTo);
 
 		int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
-		
+
 		System.out.println("pour from index: " + topPourFromIndex);
-		
+
 		int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
 		System.out.println("pour to index: " + topPourToIndex);
-		
-		if(consecutive > 1) {
-			node.setPathCost(node.getPathCost() + consecutive -1 );
-			}
+		int actualPour = 0;
+
+//		int newCost = node.getPathCost() + 1;
+//		node.setPathCost(newCost);
 		while (emptyToPourTo >= consecutive && consecutive > 0) {
-			
 
 			bottleToPourTo[topPourToIndex] = bottleToPourFrom[topPourFromIndex];
 			bottleToPourFrom[topPourFromIndex] = "e";
@@ -147,9 +146,10 @@ public class WaterSortSearch extends GenericSearch {
 			emptyToPourTo--;
 			consecutive--;
 
-
+			actualPour++;
 
 		}
+		node.setPathCost(node.getPathCost() + actualPour);
 
 		return newState;
 
@@ -171,10 +171,10 @@ public class WaterSortSearch extends GenericSearch {
 		int count = 0;
 		String bottleTop = getTop(bottle);
 		int bottleTopIndex = getTopIndex(bottle);
-		if(bottleTopIndex == -1) {
+		if (bottleTopIndex == -1) {
 			return count;
 		}
-		
+
 		for (int i = bottleTopIndex; i < bottle.length; i++) {
 			if (!bottle[i].equals("e") && bottle[i].equals(bottleTop)) {
 				count++;
@@ -187,7 +187,6 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static String[][] copyState(String[][] oldState, String[][] newState) {
-		
 
 		for (int i = 0; i < oldState.length; i++) {
 

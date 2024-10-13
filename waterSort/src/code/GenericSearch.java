@@ -15,8 +15,11 @@ public abstract class GenericSearch {
 
 	public String breadthFirstSearch(Node initialNode) {
 		Queue<Node> queue = new LinkedList<>();
-		Set<String> visited = new HashSet<>();
+		Set<String> visited = new HashSet<>(); 
+
+		
 		queue.add(initialNode);
+		visited.add(convertStateToString(initialNode.getState()));
 
 		while (!queue.isEmpty()) {
 			System.out.println("--------------------------------------------------------------");
@@ -29,32 +32,30 @@ public abstract class GenericSearch {
 				System.out.println("Goal state");
 				String plan = plan(node);
 				String goalPath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
-				System.out.println("Goal Path:" + goalPath);
+				System.out.println("Goal Path: " + goalPath);
 				System.out.println("--------------------------------------------------------------");
 				return goalPath;
 			}
-
-			visited.add(convertStateToString(currentState));
 
 			System.out.println("Operations for next Child: " + getOperations(node));
 
 			for (String action : getOperations(node)) {
 				System.out.println("Action in hand: " + action);
-				
+
 				String[][] childState = getResult(node, action);
-
-				
-				Node childNode = new Node(childState, node, action, node.getDepth() + 1, node.getPathCost()+1);
-				System.out.println("Child Node:");
-				printNode(childNode);
-				
-
 				String childStateString = convertStateToString(childState);
 
 				if (!visited.contains(childStateString) && !isReverseAction(node.getAction(), action)) {
+
+					Node childNode = new Node(childState, node, action, node.getDepth() + 1, node.getPathCost());
+					System.out.println("Child Node:");
+					printNode(childNode);
+
+					visited.add(childStateString);
 					queue.add(childNode);
 					nodesExpanded++;
 				}
+
 				System.out.println("--------------------------------------------------------------");
 			}
 		}
