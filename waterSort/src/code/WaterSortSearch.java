@@ -7,7 +7,7 @@ public class WaterSortSearch extends GenericSearch {
 	static int numberOfBottles;
 	static int bottleCapacity;
 
-	public static Node prepareInitialState(String input) {
+	public static Node prepareInitialState(String input, boolean visualize) {
 
 		String[] parts = input.split(";");
 
@@ -23,15 +23,15 @@ public class WaterSortSearch extends GenericSearch {
 			for (int j = 0; j < colors.length; j++) {
 				state[i][j] = colors[j].toString();
 			}
-
 			for (int j = colors.length; j < bottleCapacity; j++) {
 				state[i][j] = "e";
 			}
 		}
 
 		Node initialNode = new Node(state, null, null, 0, 0);
+		if(visualize) {
 		printNode(initialNode);
-
+		}
 		return initialNode;
 	}
 
@@ -77,35 +77,35 @@ public class WaterSortSearch extends GenericSearch {
 
 	public static String solve(String initialString, String strategy, boolean visualize) {
 		WaterSortSearch wss = new WaterSortSearch();
-		Node rootNode = prepareInitialState(initialString);
+		Node rootNode = prepareInitialState(initialString, visualize);
 
 		String solution;
 		switch (strategy) {
 		case "BF":
-			solution = wss.breadthFirstSearch(rootNode);
+			solution = wss.breadthFirstSearch(rootNode, visualize);
 			break;
 		case "DF":
-			solution = wss.depthFirstSearch(rootNode);
+			solution = wss.depthFirstSearch(rootNode, visualize);
 			break;
 		case "UC":
-			solution = wss.uniformCostSearch(rootNode);
+			solution = wss.uniformCostSearch(rootNode, visualize);
 			break;
 		case "ID":
-			solution = wss.iterativeDeepeningSearch(rootNode);
+			solution = wss.iterativeDeepeningSearch(rootNode, visualize);
 			break;
 		case "GR1":
-			solution = wss.greedy(rootNode,1);
+			solution = wss.greedy(rootNode, 1, visualize);
 			break;
 		case "GR2":
-			solution = wss.greedy(rootNode,2);
+			solution = wss.greedy(rootNode, 2,visualize);
 			break;
 		case "AS1":
-			solution = wss.aStar(rootNode,1);
+			solution = wss.aStar(rootNode, 1, visualize);
 			break;
 		case "AS2":
-			solution = wss.aStar(rootNode,2);
+			solution = wss.aStar(rootNode, 2, visualize);
 			break;
-		
+
 		default:
 			solution = "NOSOLUTION";
 		}
@@ -134,37 +134,47 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static PourResult pour(Node node, int i, int j) {
-	    String[][] state = node.getState();
-	    String[][] newState = copyState(state, new String[numberOfBottles][bottleCapacity]);
+		String[][] state = node.getState();
+		String[][] newState = copyState(state, new String[numberOfBottles][bottleCapacity]);
 
-	    String[] bottleToPourFrom = newState[i];
-	    String[] bottleToPourTo = newState[j];
-	    int pours = 0;
+		String[] bottleToPourFrom = newState[i];
+		String[] bottleToPourTo = newState[j];
+		int pours = 0;
 
-	    int consecutive = checkConsecutive(bottleToPourFrom);
-	    System.out.println("gowa el pour");
-	    System.out.println("Consecutive " + consecutive);
-	    
-	    int emptyToPourTo = emptySlots(bottleToPourTo);
-	    System.out.println("empty to pour to:  " + emptyToPourTo);
-	    
-	    int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
-	    System.out.println("pour from index: " + topPourFromIndex);
-	    
-	    int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
-	    System.out.println("pour to index: " + topPourToIndex);
+		int consecutive = checkConsecutive(bottleToPourFrom);
 
-	    while (emptyToPourTo >= consecutive && consecutive > 0) {
-	        pourOnce(topPourFromIndex, topPourToIndex, bottleToPourFrom, bottleToPourTo);
-	        topPourFromIndex++;
-	        topPourToIndex--;
-	        emptyToPourTo--;
-	        consecutive--;
-	        pours++;
-	        System.out.println("Pours "+pours);
-	    }
-	    
-	    return new PourResult(newState, pours);
+//		System.out.println("gowa el pour");
+//		System.out.println("Consecutive " + consecutive);
+		
+
+		int emptyToPourTo = emptySlots(bottleToPourTo);
+
+//		System.out.println("empty to pour to:  " + emptyToPourTo);
+		
+
+		int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
+
+//		System.out.println("pour from index: " + topPourFromIndex);
+
+		
+		int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
+
+//		System.out.println("pour to index: " + topPourToIndex);
+		
+
+		while (emptyToPourTo >= consecutive && consecutive > 0) {
+			pourOnce(topPourFromIndex, topPourToIndex, bottleToPourFrom, bottleToPourTo);
+			topPourFromIndex++;
+			topPourToIndex--;
+			emptyToPourTo--;
+			consecutive--;
+			pours++;
+	
+//			System.out.println("Pours " + pours);
+			
+		}
+
+		return new PourResult(newState, pours);
 	}
 
 	public static void pourOnce(int fromIndex, int toIndex, String[] bottleToPourFrom, String[] bottleToPourTo) {
@@ -266,11 +276,11 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static void main(String[] args) {
-		String init = "5;" + "4;" + "b,y,r,b;" + "b,y,r,r;" + "y,r,b,y;" + "e,e,e,e;" + "e,e,e,e;";
+		String init = "5;" + "4;" + "b,r,o,b;" + "b,r,o,o;" + "r,o,b,r;" + "e,e,e,e;" + "e,e,e,e;";
 		;
-		prepareInitialState(init);
+		prepareInitialState(init,false);
 
-		solve(init, "BF", false);
+		solve(init, "UC", false);
 
 	}
 

@@ -53,7 +53,7 @@ public class PublicTests {
 
     @Test(timeout = 60000)
     public void testa0() throws Exception {
-        String solution = WaterSortSearch.solve(grid0, "BF", false);
+        String solution = WaterSortSearch.solve(grid0, "BF", true);
         solution = solution.replace(" ", "")+";";
         System.out.println(solution);
         
@@ -469,7 +469,7 @@ class Checker{
         }
         return t() && this.b == _a;
     }
-    
+//    
     
 //    public boolean applyPlan(String grid, String solution) {
 //        boolean x = true;
@@ -553,6 +553,6 @@ class Checker{
 //        // Final validation (assuming `t()` is a final check)
 //        return t() && this.b == _a;
 //    }
-
+//
 }
 
