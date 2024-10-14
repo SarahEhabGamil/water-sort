@@ -31,6 +31,7 @@ public abstract class GenericSearch {
 				if (visualize) {
 					System.out.println("--------------------------------------------------------------");
 					System.out.println("Goal state");
+					printState(currentState);
 				}
 				String plan = plan(node);
 				String goalPath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
@@ -46,15 +47,16 @@ public abstract class GenericSearch {
 
 			}
 			for (String action : getOperations(node)) {
-				if (visualize) {
-					System.out.println("Action in hand: " + action);
-				}
+				
 				PourResult childResult = getResult(node, action);
 				String[][] childState = childResult.getState();
 				int pours = childResult.getPours();
 				String childStateString = convertStateToString(childState);
 
 				if (!visited.contains(childStateString) && !isReverseAction(node.getAction(), action)) {
+					if (visualize) {
+						System.out.println("Action in hand: " + action);
+					}
 
 					int cost = node.getPathCost() + pours;
 
@@ -66,10 +68,11 @@ public abstract class GenericSearch {
 					visited.add(childStateString);
 					queue.add(childNode);
 					nodesExpanded++;
+					if (visualize) {
+						System.out.println("--------------------------------------------------------------");
+					}
 				}
-				if (visualize) {
-					System.out.println("--------------------------------------------------------------");
-				}
+				
 			}
 		}
 

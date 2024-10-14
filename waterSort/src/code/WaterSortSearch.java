@@ -29,8 +29,8 @@ public class WaterSortSearch extends GenericSearch {
 		}
 
 		Node initialNode = new Node(state, null, null, 0, 0);
-		if(visualize) {
-		printNode(initialNode);
+		if (visualize) {
+			printNode(initialNode);
 		}
 		return initialNode;
 	}
@@ -97,7 +97,7 @@ public class WaterSortSearch extends GenericSearch {
 			solution = wss.greedy(rootNode, 1, visualize);
 			break;
 		case "GR2":
-			solution = wss.greedy(rootNode, 2,visualize);
+			solution = wss.greedy(rootNode, 2, visualize);
 			break;
 		case "AS1":
 			solution = wss.aStar(rootNode, 1, visualize);
@@ -143,24 +143,18 @@ public class WaterSortSearch extends GenericSearch {
 
 		int consecutive = checkConsecutive(bottleToPourFrom);
 
-//		System.out.println("gowa el pour");
-//		System.out.println("Consecutive " + consecutive);
-		
+
 
 		int emptyToPourTo = emptySlots(bottleToPourTo);
 
-//		System.out.println("empty to pour to:  " + emptyToPourTo);
-		
 
 		int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
 
-//		System.out.println("pour from index: " + topPourFromIndex);
 
-		
+
 		int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
 
-//		System.out.println("pour to index: " + topPourToIndex);
-		
+
 
 		while (emptyToPourTo >= consecutive && consecutive > 0) {
 			pourOnce(topPourFromIndex, topPourToIndex, bottleToPourFrom, bottleToPourTo);
@@ -169,9 +163,9 @@ public class WaterSortSearch extends GenericSearch {
 			emptyToPourTo--;
 			consecutive--;
 			pours++;
-	
-//			System.out.println("Pours " + pours);
-			
+
+
+
 		}
 
 		return new PourResult(newState, pours);
@@ -276,11 +270,11 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static void main(String[] args) {
-		String init = "5;" + "4;" + "b,r,o,b;" + "b,r,o,o;" + "r,o,b,r;" + "e,e,e,e;" + "e,e,e,e;";
+		String init = "3;" + "4;" + "r,y,r,y;" + "y,r,y,r;" + "e,e,e,e;";
 		;
-		prepareInitialState(init,false);
+		prepareInitialState(init, false);
 
-		solve(init, "UC", false);
+		solve(init, "GR2", true);
 
 	}
 

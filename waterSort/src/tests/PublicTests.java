@@ -53,7 +53,7 @@ public class PublicTests {
 
     @Test(timeout = 60000)
     public void testa0() throws Exception {
-        String solution = WaterSortSearch.solve(grid0, "BF", true);
+        String solution = WaterSortSearch.solve(grid0, "BF", false);
         solution = solution.replace(" ", "")+";";
         System.out.println(solution);
         
@@ -62,7 +62,7 @@ public class PublicTests {
     }
     @Test(timeout = 60000)
     public void testa1() throws Exception {
-        String solution = WaterSortSearch.solve(grid1, "BF", false);
+        String solution = WaterSortSearch.solve(grid1, "BF", true);
         solution = solution.replace(" ", "")+";";
         Checker pc = new Checker(grid1);
         assertTrue("The output actions do not lead to a goal state.", pc.applyPlan(grid1, solution));
