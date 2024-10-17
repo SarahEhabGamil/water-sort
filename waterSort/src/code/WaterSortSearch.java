@@ -40,7 +40,7 @@ public class WaterSortSearch extends GenericSearch {
 		for (int i = 0; i < state.length; i++) {
 			String color = state[i][bottleCapacity - 1];
 			for (int j = bottleCapacity - 1; j >= 0; j--) {
-				if (!state[i][j].equals(color))
+				if (!state[i][j].equals(color)&&(!state[i][j].equals("e")))
 					return false;
 			}
 
@@ -299,8 +299,7 @@ public class WaterSortSearch extends GenericSearch {
 	public static void main(String[] args) {
 		String init = "5;" + "4;" + "r,r,g,g;" + "b,b,y,y;" + "g,g,r,r;" + "b,b,y,y;" + "e,e,e,e;";
 		prepareInitialState(init, false);
-
-		solve(init, "UC", true);
+		solve(init, "GR2", true);
 
 	}
 

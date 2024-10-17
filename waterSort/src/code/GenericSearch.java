@@ -334,11 +334,12 @@ public abstract class GenericSearch {
 					System.out.println("Goal state");
 				}
 				String plan = plan(node);
+				String goalpath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
 				if(visualize) {
-					System.out.println("Goal Path: " + plan);
+					System.out.println("Goal Path: " + goalpath);
 					System.out.println("--------------------------------------------------------------");
 				}
-				return formulateOutput(plan, node.getPathCost(), nodesExpanded);
+				return goalpath;
 				
 			}
 
@@ -379,21 +380,26 @@ public abstract class GenericSearch {
 	// Heuristic 1: Counts the number of misplaced colors in a bottle
 	private int misplacedColorsHeuristic(Node node) {
 		String[][] state = node.getState();
+		String previousColor = "";
 		int misplacedColors = 0;
 
 		for (String[] bottle : state) {
-			if (bottle[0].equals("e"))// null to equals e
+			if (bottle[state[1].length-1].equals("e"))
 				continue; // Skip empty bottles
 			String topColor = bottle[getTopIndex(bottle)];
 			for (String liquid : bottle) {
-				if ((!liquid.equals("e")) && !liquid.equals(topColor)) {//null to equals e
-					misplacedColors++;
+				if ((!liquid.equals("e")) && !liquid.equals(topColor)) {
+					if(previousColor!=liquid) {
+						misplacedColors++;
+						previousColor = liquid;
+						}
 				}
 			}
 		}
 
 		return misplacedColors;
 	}
+
 
 	private int getTopIndex(String[] bottle) {
 		for (int i = 0; i < bottle.length; i++) {
