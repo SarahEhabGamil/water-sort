@@ -382,11 +382,11 @@ public abstract class GenericSearch {
 		int misplacedColors = 0;
 
 		for (String[] bottle : state) {
-			if (bottle[0] == null)
+			if (bottle[0].equals("e"))// null to equals e
 				continue; // Skip empty bottles
 			String topColor = bottle[getTopIndex(bottle)];
 			for (String liquid : bottle) {
-				if (liquid != null && !liquid.equals(topColor)) {
+				if ((!liquid.equals("e")) && !liquid.equals(topColor)) {//null to equals e
 					misplacedColors++;
 				}
 			}
@@ -397,24 +397,28 @@ public abstract class GenericSearch {
 
 	private int getTopIndex(String[] bottle) {
 		for (int i = 0; i < bottle.length; i++) {
-			if (bottle[i] != null) {
+			if (!bottle[i].equals("e")) { //here changed from not  = null to equals e
 				return i;
 			}
 		}
 		return bottle.length; // If the bottle is empty, return length as the top index (no liquid)
 	}
 
-	// Heuristic 2: Counts the number of incomplete bottles (bottles with more than
-	// one unique color)
+	
 	private int incompleteBottlesHeuristic(Node node) {
+		
+		//counts number of bottles with different colors of liquid
+		//HEURISTIC 2
+		
+		
 		String[][] state = node.getState();
 		int incompleteBottles = 0;
 
 		for (String[] bottle : state) {
 			Set<String> colors = new HashSet<>();
 			for (String liquid : bottle) {
-				if (liquid != null) {
-					colors.add(liquid);
+				if (!liquid.equals("e")) {  // from != null to equals e
+					colors.add(liquid); 
 				}
 			}
 			if (colors.size() > 1) {

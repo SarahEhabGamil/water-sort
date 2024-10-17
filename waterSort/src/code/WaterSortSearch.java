@@ -38,11 +38,12 @@ public class WaterSortSearch extends GenericSearch {
 	@Override
 	public boolean isGoalState(String[][] state) {
 		for (int i = 0; i < state.length; i++) {
-			String color = state[i][0];
-			for (int j = 0; j < state[i].length; j++) {
+			String color = state[i][bottleCapacity - 1];
+			for (int j = bottleCapacity - 1; j >= 0; j--) {
 				if (!state[i][j].equals(color))
 					return false;
 			}
+
 		}
 		return true;
 	}
@@ -55,14 +56,26 @@ public class WaterSortSearch extends GenericSearch {
 
 		for (int i = 0; i < state.length; i++) {
 			String bottleTop = getTop(state[i]);
+//			
+//			if (isFullySorted(state[i])) {
+//	            continue; // Skip this bottle since it's already fully sorted
+//	        }
 
 			for (int j = 0; j < state.length; j++) {
 				if (i != j && emptySlots(state[j]) > 0) {
 
-					if (getTop(state[j]).equals(bottleTop) || getTop(state[j]).equals("e")) {
-						String action = formulateAction(i, j);
+//					 if (isFullySorted(state[i]) && isEmptyBottle(state[j])) {
+//		                    continue; // Skip this move as it's redundant
+//		                }
 
-						operations.add(action);
+					if ((getTop(state[j]).equals(bottleTop) || getTop(state[j]).equals("e"))) {
+						if (!(isFullySorted(state[i]) && isEmptyBottle(state[j]))
+								&& !(isFullySorted(state[j]) && isEmptyBottle(state[i]))) {
+
+							String action = formulateAction(i, j);
+
+							operations.add(action);
+						}
 					}
 				}
 			}
@@ -143,18 +156,11 @@ public class WaterSortSearch extends GenericSearch {
 
 		int consecutive = checkConsecutive(bottleToPourFrom);
 
-
-
 		int emptyToPourTo = emptySlots(bottleToPourTo);
-
 
 		int topPourFromIndex = validPourFromIndex(getTopIndex(bottleToPourFrom));
 
-
-
 		int topPourToIndex = validPourToIndex(getTopIndex(bottleToPourTo));
-
-
 
 		while (emptyToPourTo >= consecutive && consecutive > 0) {
 			pourOnce(topPourFromIndex, topPourToIndex, bottleToPourFrom, bottleToPourTo);
@@ -163,8 +169,6 @@ public class WaterSortSearch extends GenericSearch {
 			emptyToPourTo--;
 			consecutive--;
 			pours++;
-
-
 
 		}
 
@@ -269,12 +273,34 @@ public class WaterSortSearch extends GenericSearch {
 		return -1;
 	}
 
+	private boolean isFullySorted(String[] bottle) {
+		String color = null;
+		for (String liquid : bottle) {
+			if (!liquid.equals("e")) {
+				if (color == null) {
+					color = liquid;
+				} else if (!liquid.equals(color)) {
+					return false; // If a different color is found, it's not sorted
+				}
+			}
+		}
+		return color != null; // Return true if we have a consistent color
+	}
+
+	private boolean isEmptyBottle(String[] bottle) {
+		for (String liquid : bottle) {
+			if (!liquid.equals("e")) {
+				return false; // If any non-empty slot is found, it's not empty
+			}
+		}
+		return true;
+	}
+
 	public static void main(String[] args) {
-		String init = "3;" + "4;" + "r,y,r,y;" + "y,r,y,r;" + "e,e,e,e;";
-		;
+		String init = "5;" + "4;" + "r,r,g,g;" + "b,b,y,y;" + "g,g,r,r;" + "b,b,y,y;" + "e,e,e,e;";
 		prepareInitialState(init, false);
 
-		solve(init, "GR2", true);
+		solve(init, "UC", true);
 
 	}
 
