@@ -2,8 +2,11 @@ package code;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
+
 import java.lang.management.ManagementFactory;
-import com.sun.management.OperatingSystemMXBean;
+import java.lang.management.ThreadMXBean;
 
 public class WaterSortSearch extends GenericSearch {
 	static int numberOfBottles;
@@ -281,60 +284,88 @@ public class WaterSortSearch extends GenericSearch {
 				if (color == null) {
 					color = liquid;
 				} else if (!liquid.equals(color)) {
-					return false; // If a different color is found, it's not sorted
+					return false; 
 				}
 			}
 		}
-		return color != null; // Return true if we have a consistent color
+		return color != null; 
 	}
 
 	private boolean isEmptyBottle(String[] bottle) {
 		for (String liquid : bottle) {
 			if (!liquid.equals("e")) {
-				return false; // If any non-empty slot is found, it's not empty
+				return false; 
 			}
 		}
 		return true;
 	}
 
-	public static void main(String[] args) throws InterruptedException {
-		String init = "6;" + "4;" + "g,g,g,r;" + "g,y,r,o;" + "o,r,o,y;" + "y,o,y,b;" + "r,b,b,b;" + "e,e,e,e;";
+	  public static void main(String[] args) throws InterruptedException {
+	        String init = "6;" +
+	                "4;" +
+	                "g,g,g,r;" +
+	                "g,y,r,o;" +
+	                "o,r,o,y;" +
+	                "y,o,y,b;" +
+	                "r,b,b,b;" +
+	                "e,e,e,e;";
 
-		// Print system metrics before solving
-		printProcessMetrics("Before");
+	        int trials = 5;  
+	        double totalCpuUsage = 0.0;
 
-		// Call the solve method
-		String solution = solve(init, "BF", true);
+	        
+	        long startMemoryUsed = getUsedMemory();
 
-		// Print system metrics after solving
-		printProcessMetrics("After");
+	        for (int i = 0; i < trials; i++) {
+	            System.out.println("Starting Trial " + (i + 1) + ":");
 
-		System.out.println(solution);
-	}
+	            
+	            long startCpuTime = getCpuTime();
+	            long startWallClockTime = System.nanoTime();
 
-	public static void printProcessMetrics(String when) {
-		// Cast the OperatingSystemMXBean to com.sun.management.OperatingSystemMXBean to
-		// get process-specific info
-		OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-		Runtime runtime = Runtime.getRuntime();
+	            String solution = solve(init, "UC", true);
 
-		// Calculate memory usage
-		long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024); // Used memory in MB
-		long freeMemory = runtime.freeMemory() / (1024 * 1024); // Free memory in MB
-		long totalMemory = runtime.totalMemory() / (1024 * 1024); // Total memory in MB
-		long maxMemory = runtime.maxMemory() / (1024 * 1024); // Max memory in MB
+	            long endCpuTime = getCpuTime();
+	            long endWallClockTime = System.nanoTime();
 
-		// Get the CPU load for the current Java process
-		double processCpuLoad = osBean.getProcessCpuLoad() * 100; // Convert to percentage
-		double systemCpuLoad = osBean.getSystemCpuLoad() * 100; // System-wide CPU load for comparison
+	            
+	            double cpuUsage = calculateCpuUsage(startCpuTime, endCpuTime, startWallClockTime, endWallClockTime);
+	            totalCpuUsage += cpuUsage;
+	        }
 
-		// Print metrics in the desired format
-		System.out.println(when + ":");
-		System.out.println("Process CPU Utilization: " + String.format("%.2f", processCpuLoad) + "%");
-		System.out.println("System CPU Utilization: " + String.format("%.2f", systemCpuLoad) + "%");
-		System.out.println("Used RAM: " + usedMemory + " MB");
-		System.out.println("Free RAM: " + freeMemory + " MB");
-		System.out.println("Total RAM: " + totalMemory + " MB");
-		System.out.println("Max RAM: " + maxMemory + " MB");
-	}
+	        
+	        long endMemoryUsed = getUsedMemory();
+
+	        
+	        double averageCpuUsage = totalCpuUsage / trials;
+
+	        
+	        long memoryUsedDuringTrials = endMemoryUsed - startMemoryUsed;
+
+	        
+	        System.out.println("----------------------------------------------------");
+	        System.out.println("Average CPU Utilization over " + trials + " trials: " + String.format("%.2f", averageCpuUsage) + "%");
+	        System.out.println("Total RAM Used: " + memoryUsedDuringTrials + " MB");
+	    }
+	  public static double calculateCpuUsage(long startCpuTime, long endCpuTime, long startWallClockTime, long endWallClockTime) {
+	        long cpuTimeUsed = endCpuTime - startCpuTime; 
+	        long wallClockTimeElapsed = endWallClockTime - startWallClockTime;  
+
+	        
+	        return (double) cpuTimeUsed / wallClockTimeElapsed * 100;
+	    }
+	    
+	   public static long getUsedMemory() {
+	        Runtime runtime = Runtime.getRuntime();
+	        return (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);  
+	    }
+	    
+	   public static long getCpuTime() {
+	        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+	        if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
+	            return threadMXBean.getCurrentThreadCpuTime();
+	        } else {
+	            throw new UnsupportedOperationException("CPU time measurement is not supported on this system.");
+	        }
+	    }
 }
