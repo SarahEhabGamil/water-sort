@@ -1,7 +1,9 @@
 package code;
 
-import java.io.Console;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 
 public class WaterSortSearch extends GenericSearch {
 	static int numberOfBottles;
@@ -40,7 +42,7 @@ public class WaterSortSearch extends GenericSearch {
 		for (int i = 0; i < state.length; i++) {
 			String color = state[i][bottleCapacity - 1];
 			for (int j = bottleCapacity - 1; j >= 0; j--) {
-				if (!state[i][j].equals(color)&&(!state[i][j].equals("e")))
+				if (!state[i][j].equals(color) && (!state[i][j].equals("e")))
 					return false;
 			}
 
@@ -89,6 +91,7 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static String solve(String initialString, String strategy, boolean visualize) {
+		System.out.println("Starting to solve the problem...");
 		WaterSortSearch wss = new WaterSortSearch();
 		Node rootNode = prepareInitialState(initialString, visualize);
 
@@ -118,12 +121,10 @@ public class WaterSortSearch extends GenericSearch {
 		case "AS2":
 			solution = wss.aStar(rootNode, 2, visualize);
 			break;
-
 		default:
 			solution = "NOSOLUTION";
 		}
 		return solution;
-
 	}
 
 	//////////// Pouring Methods////////////
@@ -296,11 +297,44 @@ public class WaterSortSearch extends GenericSearch {
 		return true;
 	}
 
-	public static void main(String[] args) {
-		String init = "5;" + "4;" + "r,r,g,g;" + "b,b,y,y;" + "g,g,r,r;" + "b,b,y,y;" + "e,e,e,e;";
-		prepareInitialState(init, false);
-		solve(init, "GR2", true);
+	public static void main(String[] args) throws InterruptedException {
+		String init = "6;" + "4;" + "g,g,g,r;" + "g,y,r,o;" + "o,r,o,y;" + "y,o,y,b;" + "r,b,b,b;" + "e,e,e,e;";
 
+		// Print system metrics before solving
+		printProcessMetrics("Before");
+
+		// Call the solve method
+		String solution = solve(init, "BF", true);
+
+		// Print system metrics after solving
+		printProcessMetrics("After");
+
+		System.out.println(solution);
 	}
 
+	public static void printProcessMetrics(String when) {
+		// Cast the OperatingSystemMXBean to com.sun.management.OperatingSystemMXBean to
+		// get process-specific info
+		OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+		Runtime runtime = Runtime.getRuntime();
+
+		// Calculate memory usage
+		long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024); // Used memory in MB
+		long freeMemory = runtime.freeMemory() / (1024 * 1024); // Free memory in MB
+		long totalMemory = runtime.totalMemory() / (1024 * 1024); // Total memory in MB
+		long maxMemory = runtime.maxMemory() / (1024 * 1024); // Max memory in MB
+
+		// Get the CPU load for the current Java process
+		double processCpuLoad = osBean.getProcessCpuLoad() * 100; // Convert to percentage
+		double systemCpuLoad = osBean.getSystemCpuLoad() * 100; // System-wide CPU load for comparison
+
+		// Print metrics in the desired format
+		System.out.println(when + ":");
+		System.out.println("Process CPU Utilization: " + String.format("%.2f", processCpuLoad) + "%");
+		System.out.println("System CPU Utilization: " + String.format("%.2f", systemCpuLoad) + "%");
+		System.out.println("Used RAM: " + usedMemory + " MB");
+		System.out.println("Free RAM: " + freeMemory + " MB");
+		System.out.println("Total RAM: " + totalMemory + " MB");
+		System.out.println("Max RAM: " + maxMemory + " MB");
+	}
 }
