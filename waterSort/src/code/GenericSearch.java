@@ -19,7 +19,7 @@ public abstract class GenericSearch {
 		visited.add(convertStateToString(initialNode.getState()));
 
 		while (!queue.isEmpty()) {
-			if(visualize)
+			if (visualize)
 				System.out.println("--------------------------------------------------------------");
 			Node node = queue.poll();
 
@@ -45,7 +45,7 @@ public abstract class GenericSearch {
 
 			}
 			for (String action : getOperations(node)) {
-				
+
 				PourResult childResult = getResult(node, action);
 				String[][] childState = childResult.getState();
 				int pours = childResult.getPours();
@@ -70,7 +70,7 @@ public abstract class GenericSearch {
 						System.out.println("--------------------------------------------------------------");
 					}
 				}
-				
+
 			}
 		}
 
@@ -85,31 +85,31 @@ public abstract class GenericSearch {
 		visited.add(convertStateToString(initialNode.getState()));
 
 		while (!stack.isEmpty()) {
-			if(visualize) 
+			if (visualize)
 				System.out.println("--------------------------------------------------------------");
-			
+
 			Node node = stack.pop();
 
 			String[][] currentState = node.getState();
 
 			if (isGoalState(currentState)) {
-				if(visualize) {
-				System.out.println("--------------------------------------------------------------");
-				System.out.println("Goal state");
+				if (visualize) {
+					System.out.println("--------------------------------------------------------------");
+					System.out.println("Goal state");
 				}
 				String plan = plan(node);
 				String goalPath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
-				if(visualize) {
+				if (visualize) {
 					System.out.println("Goal Path: " + goalPath);
 					System.out.println("--------------------------------------------------------------");
 				}
 				return goalPath;
 			}
-			if(visualize)
+			if (visualize)
 				System.out.println("Operations for next Child: " + getOperations(node));
 
 			for (String action : getOperations(node)) {
-				if(visualize)
+				if (visualize)
 					System.out.println("Action in hand: " + action);
 
 				PourResult childResult = getResult(node, action);
@@ -120,7 +120,7 @@ public abstract class GenericSearch {
 				if (!visited.contains(childStateString) && !isReverseAction(node.getAction(), action)) {
 					int cost = node.getPathCost() + pours;
 					Node childNode = new Node(childState, node, action, node.getDepth() + 1, cost);
-					if(visualize) {
+					if (visualize) {
 						System.out.println("Child Node:");
 						printNode(childNode);
 					}
@@ -129,7 +129,7 @@ public abstract class GenericSearch {
 					stack.push(childNode);
 					nodesExpanded++;
 				}
-				if(visualize)
+				if (visualize)
 					System.out.println("--------------------------------------------------------------");
 			}
 		}
@@ -141,11 +141,11 @@ public abstract class GenericSearch {
 		int depthLimit = 0;
 
 		while (true) {
-			if(visualize)
+			if (visualize)
 				System.out.println("--------------------------------------------------------------");
 			String result = depthLimitedSearch(initialNode, depthLimit, visualize);
 			if (!result.equals("cutoff") && !result.equals("nosolution")) {
-				if(visualize)
+				if (visualize)
 					System.out.println("Goal Path: " + result);
 				return result;
 			}
@@ -166,14 +166,14 @@ public abstract class GenericSearch {
 		visited.add(convertStateToString(node.getState()));
 
 		while (!stack.isEmpty()) {
-			if(visualize)
+			if (visualize)
 				System.out.println("--------------------------------------------------------------");
 			Node currentNode = stack.pop();
 
 			String[][] currentState = currentNode.getState();
 
 			if (isGoalState(currentState)) {
-				if(visualize)
+				if (visualize)
 					System.out.println("Goal state found.");
 				String plan = plan(currentNode);
 				return formulateOutput(plan, currentNode.getPathCost(), nodesExpanded);
@@ -192,7 +192,7 @@ public abstract class GenericSearch {
 				if (!visited.contains(childStateString) && !isReverseAction(currentNode.getAction(), action)) {
 					int cost = currentNode.getPathCost() + pours;
 					Node childNode = new Node(childState, currentNode, action, currentNode.getDepth() + 1, cost);
-					if(visualize) {
+					if (visualize) {
 						System.out.println("Child Node:");
 						printNode(childNode);
 					}
@@ -214,30 +214,30 @@ public abstract class GenericSearch {
 		visited.add(convertStateToString(initialNode.getState()));
 
 		while (!priorityQueue.isEmpty()) {
-			if(visualize)
+			if (visualize)
 				System.out.println("--------------------------------------------------------------");
 			Node node = priorityQueue.poll();
 
 			String[][] currentState = node.getState();
 
 			if (isGoalState(currentState)) {
-				if(visualize) {
+				if (visualize) {
 					System.out.println("--------------------------------------------------------------");
 					System.out.println("Goal state");
 				}
 				String plan = plan(node);
 				String goalPath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
-				if(visualize) {
+				if (visualize) {
 					System.out.println("Goal Path: " + goalPath);
 					System.out.println("--------------------------------------------------------------");
 				}
 				return goalPath;
 			}
-			if(visualize)
+			if (visualize)
 				System.out.println("Operations for next Child: " + getOperations(node));
 
 			for (String action : getOperations(node)) {
-				if(visualize)
+				if (visualize)
 					System.out.println("Action in hand: " + action);
 
 				PourResult childResult = getResult(node, action);
@@ -248,7 +248,7 @@ public abstract class GenericSearch {
 				if (!visited.contains(childStateString) && !isReverseAction(node.getAction(), action)) {
 					int cost = node.getPathCost() + pours;
 					Node childNode = new Node(childState, node, action, node.getDepth() + 1, cost);
-					if(visualize) {
+					if (visualize) {
 						System.out.println("Child Node:");
 						printNode(childNode);
 					}
@@ -257,7 +257,7 @@ public abstract class GenericSearch {
 					priorityQueue.add(childNode);
 					nodesExpanded++;
 				}
-				if(visualize)
+				if (visualize)
 					System.out.println("--------------------------------------------------------------");
 			}
 		}
@@ -278,13 +278,13 @@ public abstract class GenericSearch {
 			String[][] currentState = node.getState();
 
 			if (isGoalState(currentState)) {
-				if(visualize) {
+				if (visualize) {
 					System.out.println("--------------------------------------------------------------");
 					System.out.println("Goal state");
 				}
 				String plan = plan(node);
 				String goalPath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
-				if(visualize) {
+				if (visualize) {
 					System.out.println("Goal Path: " + goalPath);
 					System.out.println("--------------------------------------------------------------");
 				}
@@ -300,7 +300,7 @@ public abstract class GenericSearch {
 				if (!visited.contains(childStateString) && !isReverseAction(node.getAction(), action)) {
 					int cost = node.getPathCost() + pours;
 					Node childNode = new Node(childState, node, action, node.getDepth() + 1, cost);
-					if(visualize) {
+					if (visualize) {
 						System.out.println("Child Node:");
 						printNode(childNode);
 					}
@@ -327,18 +327,18 @@ public abstract class GenericSearch {
 			String[][] currentState = node.getState();
 
 			if (isGoalState(currentState)) {
-				if(visualize) {
+				if (visualize) {
 					System.out.println("--------------------------------------------------------------");
 					System.out.println("Goal state");
 				}
 				String plan = plan(node);
 				String goalpath = formulateOutput(plan, node.getPathCost(), nodesExpanded);
-				if(visualize) {
+				if (visualize) {
 					System.out.println("Goal Path: " + goalpath);
 					System.out.println("--------------------------------------------------------------");
 				}
 				return goalpath;
-				
+
 			}
 
 			for (String action : getOperations(node)) {
@@ -350,7 +350,7 @@ public abstract class GenericSearch {
 				if (!visited.contains(childStateString) && !isReverseAction(node.getAction(), action)) {
 					int cost = node.getPathCost() + pours;
 					Node childNode = new Node(childState, node, action, node.getDepth() + 1, cost);
-					if(visualize) {
+					if (visualize) {
 						System.out.println("Child Node:");
 						printNode(childNode);
 					}
@@ -364,7 +364,7 @@ public abstract class GenericSearch {
 		return "nosolution";
 	}
 
-
+	// Heuristic evaluation based on the heuristic number passed to the function
 	private int evaluateHeuristic(Node node, int heuristicNumber) {
 		if (heuristicNumber == 1) {
 			return misplacedColorsHeuristic(node);
@@ -382,15 +382,15 @@ public abstract class GenericSearch {
 		int misplacedColors = 0;
 
 		for (String[] bottle : state) {
-			if (bottle[state[1].length-1].equals("e"))
+			if (bottle[state[1].length - 1].equals("e"))
 				continue; // Skip empty bottles
 			String topColor = bottle[getTopIndex(bottle)];
 			for (String liquid : bottle) {
 				if ((!liquid.equals("e")) && !liquid.equals(topColor)) {
-					if(previousColor!=liquid) {
+					if (previousColor != liquid) {
 						misplacedColors++;
 						previousColor = liquid;
-						}
+					}
 				}
 			}
 		}
@@ -398,31 +398,28 @@ public abstract class GenericSearch {
 		return misplacedColors;
 	}
 
-
 	private int getTopIndex(String[] bottle) {
 		for (int i = 0; i < bottle.length; i++) {
-			if (!bottle[i].equals("e")) { 
+			if (!bottle[i].equals("e")) { // here changed from not = null to equals e
 				return i;
 			}
 		}
-		return bottle.length;
+		return bottle.length; // If the bottle is empty, return length as the top index (no liquid)
 	}
 
-	
 	private int incompleteBottlesHeuristic(Node node) {
-		
-		//counts number of bottles with different colors of liquid
-		//HEURISTIC 2
-		
-		
+
+		// counts number of bottles with different colors of liquid
+		// HEURISTIC 2
+
 		String[][] state = node.getState();
 		int incompleteBottles = 0;
 
 		for (String[] bottle : state) {
 			Set<String> colors = new HashSet<>();
 			for (String liquid : bottle) {
-				if (!liquid.equals("e")) {  // from != null to equals e
-					colors.add(liquid); 
+				if (!liquid.equals("e")) { // from != null to equals e
+					colors.add(liquid);
 				}
 			}
 			if (colors.size() > 1) {

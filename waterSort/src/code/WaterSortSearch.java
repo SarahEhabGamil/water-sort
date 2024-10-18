@@ -1,10 +1,7 @@
 package code;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
+import java.io.Console;
+import java.util.*;
 
 public class WaterSortSearch extends GenericSearch {
 	static int numberOfBottles;
@@ -43,7 +40,7 @@ public class WaterSortSearch extends GenericSearch {
 		for (int i = 0; i < state.length; i++) {
 			String color = state[i][bottleCapacity - 1];
 			for (int j = bottleCapacity - 1; j >= 0; j--) {
-				if (!state[i][j].equals(color) && (!state[i][j].equals("e")))
+				if (!state[i][j].equals(color)&&(!state[i][j].equals("e")))
 					return false;
 			}
 
@@ -60,8 +57,10 @@ public class WaterSortSearch extends GenericSearch {
 		for (int i = 0; i < state.length; i++) {
 			String bottleTop = getTop(state[i]);
 
+
 			for (int j = 0; j < state.length; j++) {
 				if (i != j && emptySlots(state[j]) > 0) {
+
 
 					if ((getTop(state[j]).equals(bottleTop) || getTop(state[j]).equals("e"))) {
 						if (!(isFullySorted(state[i]) && isEmptyBottle(state[j]))
@@ -84,7 +83,6 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static String solve(String initialString, String strategy, boolean visualize) {
-
 		WaterSortSearch wss = new WaterSortSearch();
 		Node rootNode = prepareInitialState(initialString, visualize);
 
@@ -114,10 +112,12 @@ public class WaterSortSearch extends GenericSearch {
 		case "AS2":
 			solution = wss.aStar(rootNode, 2, visualize);
 			break;
+
 		default:
 			solution = "NOSOLUTION";
 		}
 		return solution;
+
 	}
 
 	//////////// Pouring Methods////////////
@@ -241,6 +241,7 @@ public class WaterSortSearch extends GenericSearch {
 		}
 	}
 
+
 	public static String getTop(String[] bottle) {
 		for (String color : bottle) {
 			if (!color.equals("e")) {
@@ -268,11 +269,11 @@ public class WaterSortSearch extends GenericSearch {
 				if (color == null) {
 					color = liquid;
 				} else if (!liquid.equals(color)) {
-					return false;
+					return false; 
 				}
 			}
 		}
-		return color != null;
+		return color != null; 
 	}
 
 	private boolean isEmptyBottle(String[] bottle) {
@@ -284,60 +285,11 @@ public class WaterSortSearch extends GenericSearch {
 		return true;
 	}
 
-	public static void main(String[] args) throws InterruptedException {
-		String init = "6;" + "4;" + "g,g,g,r;" + "g,y,r,o;" + "o,r,o,y;" + "y,o,y,b;" + "r,b,b,b;" + "e,e,e,e;";
+	public static void main(String[] args) {
+		String init = "6;" +"4;" +"g,g,g,r;" +"g,y,r,o;" +"o,r,o,y;" + "y,o,y,b;" + "r,b,b,b;" +  "e,e,e,e;";
+		prepareInitialState(init, false);
+		solve(init, "UC", true);
 
-		int trials = 5;
-		double totalCpuUsage = 0.0;
-
-		long startMemoryUsed = getUsedMemory();
-
-		for (int i = 0; i < trials; i++) {
-			System.out.println("Starting Trial " + (i + 1) + ":");
-
-			long startCpuTime = getCpuTime();
-			long startWallClockTime = System.nanoTime();
-
-			String solution = solve(init, "UC", true);
-
-			long endCpuTime = getCpuTime();
-			long endWallClockTime = System.nanoTime();
-
-			double cpuUsage = calculateCpuUsage(startCpuTime, endCpuTime, startWallClockTime, endWallClockTime);
-			totalCpuUsage += cpuUsage;
-		}
-
-		long endMemoryUsed = getUsedMemory();
-
-		double averageCpuUsage = totalCpuUsage / trials;
-
-		long memoryUsedDuringTrials = endMemoryUsed - startMemoryUsed;
-
-		System.out.println("----------------------------------------------------");
-		System.out.println(
-				"Average CPU Utilization over " + trials + " trials: " + String.format("%.2f", averageCpuUsage) + "%");
-		System.out.println("Total RAM Used: " + memoryUsedDuringTrials + " MB");
 	}
 
-	public static double calculateCpuUsage(long startCpuTime, long endCpuTime, long startWallClockTime,
-			long endWallClockTime) {
-		long cpuTimeUsed = endCpuTime - startCpuTime;
-		long wallClockTimeElapsed = endWallClockTime - startWallClockTime;
-
-		return (double) cpuTimeUsed / wallClockTimeElapsed * 100;
-	}
-
-	public static long getUsedMemory() {
-		Runtime runtime = Runtime.getRuntime();
-		return (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);
-	}
-
-	public static long getCpuTime() {
-		ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-		if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
-			return threadMXBean.getCurrentThreadCpuTime();
-		} else {
-			throw new UnsupportedOperationException("CPU time measurement is not supported on this system.");
-		}
-	}
 }
