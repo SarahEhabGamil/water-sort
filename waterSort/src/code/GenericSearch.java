@@ -400,11 +400,11 @@ public abstract class GenericSearch {
 
 	private int getTopIndex(String[] bottle) {
 		for (int i = 0; i < bottle.length; i++) {
-			if (!bottle[i].equals("e")) { // here changed from not = null to equals e
+			if (!bottle[i].equals("e")) { 
 				return i;
 			}
 		}
-		return bottle.length; // If the bottle is empty, return length as the top index (no liquid)
+		return bottle.length; 
 	}
 
 	private int incompleteBottlesHeuristic(Node node) {

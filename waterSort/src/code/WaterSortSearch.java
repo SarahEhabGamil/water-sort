@@ -286,9 +286,12 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static void main(String[] args) {
-		String init = "6;" +"4;" +"g,g,g,r;" +"g,y,r,o;" +"o,r,o,y;" + "y,o,y,b;" + "r,b,b,b;" +  "e,e,e,e;";
+		
+		String init = "3;" +"4;" +"r,r,b,g;" +"b,b,g,r;" +"g,g,b,r;";
 		prepareInitialState(init, false);
-		solve(init, "UC", true);
+		
+		System.out.print(solve(init, "BF", true));
+		
 
 	}
 
