@@ -3,8 +3,6 @@ package code;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 
@@ -61,17 +59,9 @@ public class WaterSortSearch extends GenericSearch {
 
 		for (int i = 0; i < state.length; i++) {
 			String bottleTop = getTop(state[i]);
-//			
-//			if (isFullySorted(state[i])) {
-//	            continue; // Skip this bottle since it's already fully sorted
-//	        }
 
 			for (int j = 0; j < state.length; j++) {
 				if (i != j && emptySlots(state[j]) > 0) {
-
-//					 if (isFullySorted(state[i]) && isEmptyBottle(state[j])) {
-//		                    continue; // Skip this move as it's redundant
-//		                }
 
 					if ((getTop(state[j]).equals(bottleTop) || getTop(state[j]).equals("e"))) {
 						if (!(isFullySorted(state[i]) && isEmptyBottle(state[j]))
@@ -94,7 +84,7 @@ public class WaterSortSearch extends GenericSearch {
 	}
 
 	public static String solve(String initialString, String strategy, boolean visualize) {
-		System.out.println("Starting to solve the problem...");
+
 		WaterSortSearch wss = new WaterSortSearch();
 		Node rootNode = prepareInitialState(initialString, visualize);
 
@@ -251,12 +241,6 @@ public class WaterSortSearch extends GenericSearch {
 		}
 	}
 
-	@Override
-	public int getStepCost(String state, String action) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public static String getTop(String[] bottle) {
 		for (String color : bottle) {
 			if (!color.equals("e")) {
@@ -284,88 +268,76 @@ public class WaterSortSearch extends GenericSearch {
 				if (color == null) {
 					color = liquid;
 				} else if (!liquid.equals(color)) {
-					return false; 
+					return false;
 				}
 			}
 		}
-		return color != null; 
+		return color != null;
 	}
 
 	private boolean isEmptyBottle(String[] bottle) {
 		for (String liquid : bottle) {
 			if (!liquid.equals("e")) {
-				return false; 
+				return false;
 			}
 		}
 		return true;
 	}
 
-	  public static void main(String[] args) throws InterruptedException {
-	        String init = "6;" +
-	                "4;" +
-	                "g,g,g,r;" +
-	                "g,y,r,o;" +
-	                "o,r,o,y;" +
-	                "y,o,y,b;" +
-	                "r,b,b,b;" +
-	                "e,e,e,e;";
+	public static void main(String[] args) throws InterruptedException {
+		String init = "6;" + "4;" + "g,g,g,r;" + "g,y,r,o;" + "o,r,o,y;" + "y,o,y,b;" + "r,b,b,b;" + "e,e,e,e;";
 
-	        int trials = 5;  
-	        double totalCpuUsage = 0.0;
+		int trials = 5;
+		double totalCpuUsage = 0.0;
 
-	        
-	        long startMemoryUsed = getUsedMemory();
+		long startMemoryUsed = getUsedMemory();
 
-	        for (int i = 0; i < trials; i++) {
-	            System.out.println("Starting Trial " + (i + 1) + ":");
+		for (int i = 0; i < trials; i++) {
+			System.out.println("Starting Trial " + (i + 1) + ":");
 
-	            
-	            long startCpuTime = getCpuTime();
-	            long startWallClockTime = System.nanoTime();
+			long startCpuTime = getCpuTime();
+			long startWallClockTime = System.nanoTime();
 
-	            String solution = solve(init, "UC", true);
+			String solution = solve(init, "UC", true);
 
-	            long endCpuTime = getCpuTime();
-	            long endWallClockTime = System.nanoTime();
+			long endCpuTime = getCpuTime();
+			long endWallClockTime = System.nanoTime();
 
-	            
-	            double cpuUsage = calculateCpuUsage(startCpuTime, endCpuTime, startWallClockTime, endWallClockTime);
-	            totalCpuUsage += cpuUsage;
-	        }
+			double cpuUsage = calculateCpuUsage(startCpuTime, endCpuTime, startWallClockTime, endWallClockTime);
+			totalCpuUsage += cpuUsage;
+		}
 
-	        
-	        long endMemoryUsed = getUsedMemory();
+		long endMemoryUsed = getUsedMemory();
 
-	        
-	        double averageCpuUsage = totalCpuUsage / trials;
+		double averageCpuUsage = totalCpuUsage / trials;
 
-	        
-	        long memoryUsedDuringTrials = endMemoryUsed - startMemoryUsed;
+		long memoryUsedDuringTrials = endMemoryUsed - startMemoryUsed;
 
-	        
-	        System.out.println("----------------------------------------------------");
-	        System.out.println("Average CPU Utilization over " + trials + " trials: " + String.format("%.2f", averageCpuUsage) + "%");
-	        System.out.println("Total RAM Used: " + memoryUsedDuringTrials + " MB");
-	    }
-	  public static double calculateCpuUsage(long startCpuTime, long endCpuTime, long startWallClockTime, long endWallClockTime) {
-	        long cpuTimeUsed = endCpuTime - startCpuTime; 
-	        long wallClockTimeElapsed = endWallClockTime - startWallClockTime;  
+		System.out.println("----------------------------------------------------");
+		System.out.println(
+				"Average CPU Utilization over " + trials + " trials: " + String.format("%.2f", averageCpuUsage) + "%");
+		System.out.println("Total RAM Used: " + memoryUsedDuringTrials + " MB");
+	}
 
-	        
-	        return (double) cpuTimeUsed / wallClockTimeElapsed * 100;
-	    }
-	    
-	   public static long getUsedMemory() {
-	        Runtime runtime = Runtime.getRuntime();
-	        return (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);  
-	    }
-	    
-	   public static long getCpuTime() {
-	        ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-	        if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
-	            return threadMXBean.getCurrentThreadCpuTime();
-	        } else {
-	            throw new UnsupportedOperationException("CPU time measurement is not supported on this system.");
-	        }
-	    }
+	public static double calculateCpuUsage(long startCpuTime, long endCpuTime, long startWallClockTime,
+			long endWallClockTime) {
+		long cpuTimeUsed = endCpuTime - startCpuTime;
+		long wallClockTimeElapsed = endWallClockTime - startWallClockTime;
+
+		return (double) cpuTimeUsed / wallClockTimeElapsed * 100;
+	}
+
+	public static long getUsedMemory() {
+		Runtime runtime = Runtime.getRuntime();
+		return (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);
+	}
+
+	public static long getCpuTime() {
+		ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+		if (threadMXBean.isCurrentThreadCpuTimeSupported()) {
+			return threadMXBean.getCurrentThreadCpuTime();
+		} else {
+			throw new UnsupportedOperationException("CPU time measurement is not supported on this system.");
+		}
+	}
 }

@@ -11,8 +11,6 @@ public abstract class GenericSearch {
 
 	public abstract PourResult getResult(Node node, String action);
 
-	public abstract int getStepCost(String state, String action);
-
 	public String breadthFirstSearch(Node initialNode, boolean visualize) {
 		Queue<Node> queue = new LinkedList<>();
 		Set<String> visited = new HashSet<>();
@@ -366,7 +364,7 @@ public abstract class GenericSearch {
 		return "nosolution";
 	}
 
-	// Heuristic evaluation based on the heuristic number passed to the function
+
 	private int evaluateHeuristic(Node node, int heuristicNumber) {
 		if (heuristicNumber == 1) {
 			return misplacedColorsHeuristic(node);
@@ -403,11 +401,11 @@ public abstract class GenericSearch {
 
 	private int getTopIndex(String[] bottle) {
 		for (int i = 0; i < bottle.length; i++) {
-			if (!bottle[i].equals("e")) { //here changed from not  = null to equals e
+			if (!bottle[i].equals("e")) { 
 				return i;
 			}
 		}
-		return bottle.length; // If the bottle is empty, return length as the top index (no liquid)
+		return bottle.length;
 	}
 
 	
